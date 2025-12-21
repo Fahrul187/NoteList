@@ -1,0 +1,124 @@
+import { Link } from "react-router";
+
+export default function ProfilePage() {
+    return (
+        <div className="min-h-[calc(100vh-64px)] bg-gray-50 pb-20 relative overflow-hidden">
+            
+            <div className="fixed top-0 left-0 w-full h-full -z-10 pointer-events-none">
+                <div className="absolute top-20 right-[-10%] w-96 h-96 bg-fuchsia-200 rounded-full blur-3xl opacity-20"></div>
+                <div className="absolute bottom-20 left-[-10%] w-80 h-80 bg-pink-200 rounded-full blur-3xl opacity-20"></div>
+            </div>
+
+            <div className="max-w-5xl w-[90%] mx-auto pt-10">
+                
+                <div className="flex items-center gap-4 mb-8">
+                    <Link to="/" className=" text-gray-400 hover:text-fuchsia-500 transition">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
+                        </svg>
+                    </Link>
+                    <div>
+                        <h1 className="text-3xl font-bold text-gray-800">Profil Kamu</h1>
+                        <p className="text-gray-500 text-sm">Atur informasi pribadi dan keamanan akunmu.</p>
+                    </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    
+                    <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 flex flex-col h-full">
+                        <div className="flex items-center gap-3 mb-6 pb-4 border-b border-dashed border-gray-100">
+                            <div className="w-10 h-10 bg-fuchsia-100 text-fuchsia-500 rounded-full flex items-center justify-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
+                                </svg>
+                            </div>
+                            <h2 className="text-xl font-bold text-gray-800">Edit Profil</h2>
+                        </div>
+
+                        <div className="space-y-4 mb-8">
+                            <div>
+                                <label className="block text-sm font-semibold text-gray-600 mb-2">Nama Lengkap</label>
+                                <div className="relative group">
+                                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                        <svg className="h-5 w-5 text-gray-400 group-focus-within:text-fuchsia-500 transition-colors" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                        </svg>
+                                    </div>
+                                    <input 
+                                        type="text" 
+                                        defaultValue="fahrul siddiq"
+                                        className="w-full pl-12 pr-4 py-3 bg-gray-50 border-2 border-gray-100 rounded-2xl text-gray-700 focus:bg-white focus:outline-none focus:border-fuchsia-300 transition-all"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="mt-auto">
+                            <button className="w-full py-3 px-4 bg-fuchsia-500 hover:bg-fuchsia-600 text-white font-bold rounded-xl shadow-lg shadow-fuchsia-200 hover:shadow-fuchsia-300 hover:-translate-y-1 transition-all cursor-pointer flex justify-center items-center gap-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+                                </svg>
+                                Update Profil
+                            </button>
+                        </div>
+                    </div>
+
+                    <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 flex flex-col h-full">
+                        <div className="flex items-center gap-3 mb-6 pb-4 border-b border-dashed border-gray-100">
+                            <div className="w-10 h-10 bg-purple-100 text-purple-500 rounded-full flex items-center justify-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" />
+                                </svg>
+                            </div>
+                            <h2 className="text-xl font-bold text-gray-800">Ganti Password</h2>
+                        </div>
+
+                        <div className="space-y-4 mb-8">
+                            <div>
+                                <label className="block text-sm font-semibold text-gray-600 mb-2">Password Baru</label>
+                                <div className="relative group">
+                                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                        <svg className="h-5 w-5 text-gray-400 group-focus-within:text-purple-500 transition-colors" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                                        </svg>
+                                    </div>
+                                    <input 
+                                        type="password" 
+                                        placeholder="••••••••"
+                                        className="w-full pl-12 pr-4 py-3 bg-gray-50 border-2 border-gray-100 rounded-2xl text-gray-700 focus:bg-white focus:outline-none focus:border-purple-300 transition-all"
+                                    />
+                                </div>
+                            </div>
+
+                            <div>
+                                <label className="block text-sm font-semibold text-gray-600 mb-2">Konfirmasi Password</label>
+                                <div className="relative group">
+                                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                        <svg className="h-5 w-5 text-gray-400 group-focus-within:text-purple-500 transition-colors" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                        </svg>
+                                    </div>
+                                    <input 
+                                        type="password" 
+                                        placeholder="••••••••"
+                                        className="w-full pl-12 pr-4 py-3 bg-gray-50 border-2 border-gray-100 rounded-2xl text-gray-700 focus:bg-white focus:outline-none focus:border-purple-300 transition-all"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="mt-auto">
+                            <button className="w-full py-3 px-4 bg-white border-2 border-gray-100 text-gray-600 font-bold rounded-xl hover:border-purple-200 hover:text-purple-600 hover:bg-purple-50 transition-all cursor-pointer flex justify-center items-center gap-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
+                                </svg>
+                                Update Password
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    )
+}

@@ -1,0 +1,40 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+}
+
+model Users {
+  username String  @id @db.VarChar(100) // Kita pakai username sebagai ID biar unik
+  password String  @db.VarChar(100)     // Akan menyimpan password yang sudah di-hash (acak)
+  name     String  @db.VarChar(100)
+  token    String? @db.VarChar(100)     // Bisa null (kosong) kalau user sedang logout
+  
+  // Relasi: Satu User bisa punya banyak Notes
+  notes    Notes[] 
+
+  @@map("users")
+}
+
+model Notes {
+  id        Int      @id @default(autoincrement())
+  title     String   @db.VarChar(100)
+  content   String   @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // Relasi: Notes ini milik siapa?
+  username  String   @db.VarChar(100)
+  users      Users     @relation(fields: [username], references: [username])
+
+  @@map("notes")
+}
