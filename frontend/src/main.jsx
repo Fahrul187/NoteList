@@ -3,18 +3,23 @@ import { createRoot } from 'react-dom/client'
 import './style.css'
 import App from './App'
 import { BrowserRouter, Route, Routes } from 'react-router'
-import Navbar from './Navbar'
-import DetailNote from './DetailNote'
-import ProfilePage from './ProfilePage'
+import DetailNote from './components/DetailNote'
+import ProfilePage from './components/ProfilePage'
+import Login from './components/Login'
+import Layout from './components/Layout'
+import Register from './components/Register'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <BrowserRouter>
-      <Navbar />
       <Routes>
-        <Route path="/" element={<App />} />
-        <Route path="/:id" element={<DetailNote />} />
-        <Route path="/profile" element={<ProfilePage />} />
+        <Route element={<Layout />}>
+          <Route path="/" element={<App />} />
+          <Route path="/:id" element={<DetailNote />} />
+          <Route path="/profile" element={<ProfilePage />} />
+        </Route>
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
       </Routes>
     </BrowserRouter>
   </StrictMode>

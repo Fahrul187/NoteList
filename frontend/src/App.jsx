@@ -20,6 +20,36 @@ export default function App() {
             createdAt: "2024-06-10",
             category: "Food"
         },
+        {
+            title: "Resep Seblak",
+            content: "Kerupuk oren, kencur, bawang putih, cabe rawit 10 biji. Jangan lupa garem micin.",
+            createdAt: "2024-06-10",
+            category: "Food"
+        },
+        {
+            title: "Resep Seblak",
+            content: "Kerupuk oren, kencur, bawang putih, cabe rawit 10 biji. Jangan lupa garem micin.",
+            createdAt: "2024-06-10",
+            category: "Food"
+        },
+        {
+            title: "Resep Seblak",
+            content: "Kerupuk oren, kencur, bawang putih, cabe rawit 10 biji. Jangan lupa garem micin.",
+            createdAt: "2024-06-10",
+            category: "Food"
+        },
+        {
+            title: "Resep Seblak",
+            content: "Kerupuk oren, kencur, bawang putih, cabe rawit 10 biji. Jangan lupa garem micin.",
+            createdAt: "2024-06-10",
+            category: "Food"
+        },
+        {
+            title: "Resep Seblak",
+            content: "Kerupuk oren, kencur, bawang putih, cabe rawit 10 biji. Jangan lupa garem micin.",
+            createdAt: "2024-06-10",
+            category: "Food"
+        },
     ];
 
     return (
@@ -31,7 +61,7 @@ export default function App() {
 
             <section className="max-w-7xl w-[90%] mx-auto pt-10">
                 
-                <div className="flex flex-col md:flex-row justify-between items-end mb-10 gap-4">
+                <div className="flex flex-col md:flex-row justify-between md:items-end mb-10 gap-4">
                     <div>
                         <h1 className="text-4xl font-bold text-gray-800 mb-2">
                             Catatan Kamu <span className="text-2xl">✨</span>

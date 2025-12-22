@@ -1,11 +1,12 @@
 import express from "express";
+import cors from "cors"
 import { publicRouter } from "./routes/public-api.route.js";
 import { errorMiddleware } from "./middleware/error.middleware.js";
 import dotenv from 'dotenv'
 dotenv.config()
 
 const app = express()
-
+app.use(cors())
 app.use(express.json())
 app.use(publicRouter)
 app.use(errorMiddleware)
