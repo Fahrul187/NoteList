@@ -1,5 +1,5 @@
 import supertest from "supertest"
-import { createTestUser, removeTestUser } from "./test-util.js"
+import { createTestUser, getTestUser, removeTestUser } from "./test-util.js"
 import app from "../src/main.js"
 
 
@@ -88,6 +88,122 @@ describe('POST /api/users/login', () => {
             username: "test",
             password: "ngawur"
         })
+
+        expect(result.status).toBe(401)
+        expect(result.body.errors).toBeDefined()
+    })
+})
+
+describe('GET /api/users/current', () => {
+    beforeEach(async () => {
+        await removeTestUser()
+        await createTestUser() // User dibuat dengan token "test"
+    })
+
+    afterEach(async () => {
+        await removeTestUser()
+    })
+
+    it('should can get current user', async () => {
+        const result = await supertest(app)
+            .get('/api/users/current')
+            .set('Authorization', 'test') // Kirim token
+
+        expect(result.status).toBe(200)
+        expect(result.body.data.username).toBe("test")
+        expect(result.body.data.name).toBe("test")
+    })
+
+    it('should reject if token is invalid', async () => {
+        const result = await supertest(app)
+            .get('/api/users/current')
+            .set('Authorization', 'salah') // Token salah
+
+        expect(result.status).toBe(401)
+        expect(result.body.errors).toBeDefined()
+    })
+})
+
+describe('PATCH /api/users/current', () => {
+    beforeEach(async () => {
+        await removeTestUser()
+        await createTestUser()
+    })
+
+    afterEach(async () => {
+        await removeTestUser()
+    })
+
+    it('should can update user', async () => {
+        const result = await supertest(app)
+            .patch('/api/users/current')
+            .set('Authorization', 'test')
+            .send({
+                name: "Fahrul",
+                password: "passwordBaru"
+            })
+
+        expect(result.status).toBe(200)
+        expect(result.body.data.name).toBe("Fahrul")
+        expect(result.body.data.username).toBe("test")
+    })
+
+    it('should can update user name only', async () => {
+        const result = await supertest(app)
+            .patch('/api/users/current')
+            .set('Authorization', 'test')
+            .send({
+                name: "Fahrul"
+            })
+
+        expect(result.status).toBe(200)
+        expect(result.body.data.name).toBe("Fahrul")
+    })
+
+    it('should can update user password only', async () => {
+        const result = await supertest(app)
+            .patch('/api/users/current')
+            .set('Authorization', 'test')
+            .send({
+                password: "passwordBaru"
+            })
+
+        expect(result.status).toBe(200)
+        
+        // Cek database apakah password berubah
+        const user = await getTestUser();
+        // Password di db harus beda dengan hash "rahasia" (karena sudah diganti "baru")
+        expect(user.password).not.toBe("rahasia"); 
+    })
+})
+
+describe('DELETE /api/users/logout', () => {
+    beforeEach(async () => {
+        await removeTestUser()
+        await createTestUser()
+    })
+
+    afterEach(async () => {
+        await removeTestUser()
+    })
+
+    it('should can logout', async () => {
+        const result = await supertest(app)
+            .delete('/api/users/logout')
+            .set('Authorization', 'test')
+
+        expect(result.status).toBe(200)
+        expect(result.body.data).toBe("OK")
+
+        // Pastikan token di database sudah dihapus (jadi null)
+        const user = await getTestUser()
+        expect(user.token).toBeNull()
+    })
+
+    it('should reject logout if token is invalid', async () => {
+        const result = await supertest(app)
+            .delete('/api/users/logout')
+            .set('Authorization', 'salah')
 
         expect(result.status).toBe(401)
         expect(result.body.errors).toBeDefined()

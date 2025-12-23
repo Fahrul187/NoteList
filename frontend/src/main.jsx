@@ -8,18 +8,19 @@ import ProfilePage from './components/ProfilePage'
 import Login from './components/Login'
 import Layout from './components/Layout'
 import Register from './components/Register'
+import { GuestRoute, ProtectedRoute } from './components/AuthGuard'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <BrowserRouter>
       <Routes>
-        <Route element={<Layout />}>
+        <Route element={<ProtectedRoute><Layout/></ProtectedRoute>}>
           <Route path="/" element={<App />} />
           <Route path="/:id" element={<DetailNote />} />
           <Route path="/profile" element={<ProfilePage />} />
         </Route>
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
+        <Route path="/login" element={<GuestRoute><Login /></GuestRoute>} />
+        <Route path="/register" element={<GuestRoute><Register /></GuestRoute>} />
       </Routes>
     </BrowserRouter>
   </StrictMode>

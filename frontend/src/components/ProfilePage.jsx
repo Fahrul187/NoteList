@@ -1,6 +1,19 @@
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
+import { alertConfirm } from "../lib/alert";
+import { logout } from "../lib/user-api";
 
 export default function ProfilePage() {
+    const navigate = useNavigate()
+
+    const handleLogout = async () => {
+        const isConfirmed = await alertConfirm('Apakah kamu yakin ingin keluar')
+
+        if (!isConfirmed) return
+
+        logout()
+
+        navigate('/login')
+    }
     return (
         <div className="min-h-[calc(100vh-64px)] bg-gray-50 pb-20 relative overflow-hidden">
             
@@ -59,6 +72,12 @@ export default function ProfilePage() {
                                     <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
                                 </svg>
                                 Update Profil
+                            </button>
+                        </div>
+                        <div className="mt-auto">
+                            <button onClick={handleLogout} className="w-full py-3 px-4 bg-red-500 hover:bg-red-600 text-white font-bold rounded-xl shadow-lg shadow-fuchsia-200 hover:shadow-fuchsia-300 hover:-translate-y-1 transition-all cursor-pointer flex justify-center items-center gap-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 256 256"><path d="M120,216a8,8,0,0,1-8,8H48a8,8,0,0,1-8-8V40a8,8,0,0,1,8-8h64a8,8,0,0,1,0,16H56V208h56A8,8,0,0,1,120,216Zm109.66-93.66-40-40a8,8,0,0,0-11.32,11.32L204.69,120H112a8,8,0,0,0,0,16h92.69l-26.35,26.34a8,8,0,0,0,11.32,11.32l40-40A8,8,0,0,0,229.66,122.34Z"></path></svg>
+                                Logout
                             </button>
                         </div>
                     </div>

@@ -1,6 +1,6 @@
 import { prismaClient } from "../application/database.js"
 import { ResponseError } from "../error/response.error.js"
-import { loginUserValidation, registerUserValidation } from "../validation/user.validation.js"
+import { getUserValidation, loginUserValidation, registerUserValidation, updateUserValidation } from "../validation/user.validation.js"
 import { validate } from "../validation/validation.js"
 import bcrypt from "bcrypt";
 import { v4 as uuid } from "uuid";
@@ -66,7 +66,91 @@ const login = async (request) => {
     })
 }
 
+const get = async (username) => {
+    username = validate(getUserValidation, username)
+
+    const user = await prismaClient.users.findUnique({
+        where: {
+            username: username
+        },
+        select: {
+            username: true,
+            name: true
+        }
+    })
+
+    if (!user) {
+        throw new ResponseError(404, 'user nou found')
+    }
+
+    return user
+}
+
+const update = async (request) => {
+    const user = validate(updateUserValidation, request)
+
+    const totalUserInDatabase = await prismaClient.users.count({
+        where: {
+            username: user.username
+        }
+    })
+
+    if (totalUserInDatabase !== 1) {
+        throw new ResponseError(404, 'user not found')
+    }
+
+    const data = {}
+
+    if (user.name) {
+        data.name = user.name
+    }
+
+    if (user.password) {
+        data.password = await bcrypt.hash(user.password, 10)
+    }
+
+    return prismaClient.users.update({
+        where: {
+            username: user.username
+        },
+        data: data,
+        select: {
+            username: true,
+            name: true
+        }
+    })
+}
+
+const logout = async (username) => {
+    username = validate(getUserValidation, username)
+
+    const user = await prismaClient.users.findUnique({
+        where: {
+            username: username
+        }
+    })
+
+    if (!user) {
+        throw new ResponseError(404, 'user not found');
+    }
+
+    return prismaClient.users.update({
+        where: {
+            username: username
+        },
+        data: {
+            token: null
+        },
+        select: {
+            username: true
+        }
+    })
+}
+
 export default {
     register,
-    login
+    login,
+    get,
+    update,
+    logout
 }
