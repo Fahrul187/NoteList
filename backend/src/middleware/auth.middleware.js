@@ -1,10 +1,10 @@
 import { prismaClient } from '../application/database.js'
 
 export const authMiddleware = async (req, res, next) => {
-    const token = req.get('Authorization')
+    const token = req.cookies.token
 
     if (!token) {
-        req.status(401).json({
+        res.status(401).json({
             errors: 'Unauthorized'
         }).end()
     } else {
@@ -15,6 +15,7 @@ export const authMiddleware = async (req, res, next) => {
         })
         
         if (!user) {
+            res.clearCookie('token')
             res.status(401).json({
                 errors: 'Unauthorized'
             }).end()

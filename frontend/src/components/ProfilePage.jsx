@@ -1,39 +1,45 @@
 import { Link, useNavigate, useOutletContext } from "react-router";
 import { alertConfirm, alertError, alertSuccess } from "../lib/alert";
-import { getUser, logoutAPI, updateUser } from "../lib/user-api";
-import { useEffect, useState } from "react";
+import { getUser, logout, logoutAPI, updateUser } from "../lib/user-api";
+import { useEffect, useRef, useState } from "react";
 
 export default function ProfilePage() {
     const navigate = useNavigate()
     const { refreshUser } = useOutletContext()
     const [name, setName] = useState("")
-    const token = localStorage.getItem("token")
     const [isProfileLoading, setIsProfileLoading] = useState(false)
     const [isPasswordLoading, setIsPasswordLoading] = useState(false)
+    const [originalName, setOriginalName] = useState("")
+    const newPasswordRef = useRef(null)
+    const confirmPasswordRef = useRef(null)
     const [passwordForm, setPasswordForm] = useState({
         newPassword: "",
         confirmPassword: ""
     })
-    const [originalName, setOriginalName] = useState("")
 
     useEffect(() => {
         const fetchUserData = async () => {
             try {
-                if (!token) {
-                    navigate('/login')
-                    return
-                }
-                const result = await getUser(token)
+                const result = await getUser()
                 setName(result.data.name)
                 setOriginalName(result.data.name)
             } catch (error) {
                 alertError('Sesi habis silahkan login lagi')
-                localStorage.removeItem('token')
                 navigate('/login')
             }
         }
         fetchUserData()
-    }, [token, navigate])
+    }, [navigate])
+
+    const handleKeyDown = (e, prevRef, nextRef) => {
+        if (e.key === "Enter" || e.key === "ArrowDown") {
+            e.preventDefault()
+            nextRef?.current?.focus()
+        } else if (e.key === "ArrowUp") {
+            e.preventDefault()
+            prevRef?.current?.focus()
+        }
+    }
 
     const handleUpdateProfile = async () => {
         if (!name.trim()) {
@@ -44,7 +50,7 @@ export default function ProfilePage() {
         }
         setIsProfileLoading(true)
         try {
-            await updateUser(token, { name: name })
+            await updateUser({ name: name })
             setOriginalName(name)
             if (refreshUser) refreshUser()
             await alertSuccess('Nama berhasil diperbarui!')
@@ -59,7 +65,9 @@ export default function ProfilePage() {
         const { newPassword, confirmPassword } = passwordForm
 
         if (!newPassword || !confirmPassword) {
-            return alertError('Mohon isi kedua kolom password')
+            if (!newPassword) return newPasswordRef.current.focus()
+            if (!confirmPassword) return confirmPasswordRef.current.focus()
+            return
         }
         if (newPassword !== confirmPassword) {
             return alertError('Konfirmasi password tidak cocok!')
@@ -71,7 +79,7 @@ export default function ProfilePage() {
         setIsPasswordLoading(true)
 
         try {
-            await updateUser(token, { password: newPassword })
+            await updateUser({ password: newPassword })
             await alertSuccess('Password berhasil diganti!')
 
             setPasswordForm({ newPassword: '', confirmPassword: '' })
@@ -87,15 +95,12 @@ export default function ProfilePage() {
         if (!isConfirmed) return
 
         try {
-            await logoutAPI(token)
+            await logoutAPI()
         } catch (error) {
-            console.error('Gagal logout', error);
+            console.error('Gagal logout', error)
         }
 
-        localStorage.removeItem('token')
-        localStorage.removeItem('user')
-
-        await alertSuccess('Berhasil Logout')
+        logout()
         navigate('/login')
     }
     return (
@@ -144,8 +149,8 @@ export default function ProfilePage() {
                                     <input
                                         value={name}
                                         onChange={(e) => setName(e.target.value)}
-                                    type="text"
-                                    className="w-full pl-12 pr-4 py-3 bg-gray-50 border-2 border-gray-100 rounded-2xl text-gray-700 focus:bg-white focus:outline-none focus:border-fuchsia-300 transition-all"
+                                        type="text"
+                                        className="w-full pl-12 pr-4 py-3 bg-gray-50 border-2 border-gray-100 rounded-2xl text-gray-700 focus:bg-white focus:outline-none focus:border-fuchsia-300 transition-all"
                                     />
                                 </div>
                             </div>
@@ -159,8 +164,8 @@ export default function ProfilePage() {
                                 {isProfileLoading ? "Menyimpan..." : "Update Profil"}
                             </button>
                         </div>
-                        <div className="mt-auto">
-                            <button onClick={handleLogout} className="w-full py-3 px-4 bg-red-500 hover:bg-red-600 text-white font-bold rounded-xl shadow-lg shadow-fuchsia-200 hover:shadow-fuchsia-300 hover:-translate-y-1 transition-all cursor-pointer flex justify-center items-center gap-2">
+                        <div className="mt-5">
+                            <button onClick={handleLogout} className="w-full py-3 px-4 bg-red-500 hover:bg-red-600 text-white font-bold rounded-xl shadow-lg shadow-red-200 hover:shadow-red-300 hover:-translate-y-1 transition-all cursor-pointer flex justify-center items-center gap-2">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 256 256"><path d="M120,216a8,8,0,0,1-8,8H48a8,8,0,0,1-8-8V40a8,8,0,0,1,8-8h64a8,8,0,0,1,0,16H56V208h56A8,8,0,0,1,120,216Zm109.66-93.66-40-40a8,8,0,0,0-11.32,11.32L204.69,120H112a8,8,0,0,0,0,16h92.69l-26.35,26.34a8,8,0,0,0,11.32,11.32l40-40A8,8,0,0,0,229.66,122.34Z"></path></svg>
                                 Logout
                             </button>
@@ -187,10 +192,12 @@ export default function ProfilePage() {
                                         </svg>
                                     </div>
                                     <input
+                                        ref={newPasswordRef}
+                                        onKeyDown={(e) => handleKeyDown(e, null, confirmPasswordRef)}
                                         value={passwordForm.newPassword}
-                                        onChange={(e) => setPasswordForm({...passwordForm, newPassword: e.target.value})}
+                                        onChange={(e) => setPasswordForm({ ...passwordForm, newPassword: e.target.value })}
                                         type="password"
-                                        placeholder="••••••••"
+                                        placeholder="Password"
                                         className="w-full pl-12 pr-4 py-3 bg-gray-50 border-2 border-gray-100 rounded-2xl text-gray-700 focus:bg-white focus:outline-none focus:border-purple-300 transition-all"
                                     />
                                 </div>
@@ -205,10 +212,20 @@ export default function ProfilePage() {
                                         </svg>
                                     </div>
                                     <input
+                                        ref={confirmPasswordRef}
                                         value={passwordForm.confirmPassword}
-                                        onChange={(e) => setPasswordForm({...passwordForm, confirmPassword: e.target.value})}
+                                        onChange={(e) => setPasswordForm({ ...passwordForm, confirmPassword: e.target.value })}
+                                        onKeyDown={(e) => {
+                                            if (e.key === "ArrowUp") {
+                                                e.preventDefault()
+                                                newPasswordRef.current?.focus()
+                                            } else if (e.key === "Enter") {
+                                                e.preventDefault()
+                                                handleUpdatePassword()
+                                            }
+                                        }}
                                         type="password"
-                                        placeholder="••••••••"
+                                        placeholder="Confirm password"
                                         className="w-full pl-12 pr-4 py-3 bg-gray-50 border-2 border-gray-100 rounded-2xl text-gray-700 focus:bg-white focus:outline-none focus:border-purple-300 transition-all"
                                     />
                                 </div>
@@ -216,7 +233,7 @@ export default function ProfilePage() {
                         </div>
 
                         <div className="mt-auto">
-                            <button onClick={handleUpdatePassword} disabled={isPasswordLoading} className="w-full py-3 px-4 bg-white border-2 border-gray-100 text-gray-600 font-bold rounded-xl hover:border-purple-200 hover:text-purple-600 hover:bg-purple-50 transition-all cursor-pointer flex justify-center items-center gap-2">
+                            <button onClick={handleUpdatePassword} disabled={isPasswordLoading} className="hover:text-purple-600 w-full py-3 px-4 border-2 font-bold rounded-xl border-purple-200 text-purple-500 bg-purple-50 hover:bg-purple-100 transition-all cursor-pointer flex justify-center items-center gap-2">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
                                 </svg>

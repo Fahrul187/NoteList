@@ -89,13 +89,13 @@ const get = async (username) => {
 const update = async (request) => {
     const user = validate(updateUserValidation, request)
 
-    const totalUserInDatabase = await prismaClient.users.count({
+    const userInDatabase = await prismaClient.users.findUnique({
         where: {
             username: user.username
         }
     })
 
-    if (totalUserInDatabase !== 1) {
+    if (!userInDatabase) {
         throw new ResponseError(404, 'user not found')
     }
 
@@ -106,6 +106,11 @@ const update = async (request) => {
     }
 
     if (user.password) {
+        const isSamePassword = await bcrypt.compare(user.password, userInDatabase.password);
+
+        if (isSamePassword) {
+            throw new ResponseError(400, "Password kamu sama dengan yang sebelumnya");
+        }
         data.password = await bcrypt.hash(user.password, 10)
     }
 

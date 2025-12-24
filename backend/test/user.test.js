@@ -77,8 +77,10 @@ describe('POST /api/users/login', () => {
         })
 
         expect(result.status).toBe(200)
-        expect(result.body.data.token).toBeDefined()
-        expect(result.body.data.token).not.toBeNull()
+        expect(result.body.data.token).toBeUndefined()
+        expect(result.get('Set-Cookie')).toBeDefined()
+        const cookies = result.get('Set-Cookie').toString();
+        expect(cookies).toContain('token=')
     })
     
     it('should reject login if password wrong', async () => {
@@ -107,7 +109,7 @@ describe('GET /api/users/current', () => {
     it('should can get current user', async () => {
         const result = await supertest(app)
             .get('/api/users/current')
-            .set('Authorization', 'test') // Kirim token
+            .set('Cookie', 'token=test')
 
         expect(result.status).toBe(200)
         expect(result.body.data.username).toBe("test")
@@ -117,7 +119,7 @@ describe('GET /api/users/current', () => {
     it('should reject if token is invalid', async () => {
         const result = await supertest(app)
             .get('/api/users/current')
-            .set('Authorization', 'salah') // Token salah
+            .set('Cookie', 'token=salah')
 
         expect(result.status).toBe(401)
         expect(result.body.errors).toBeDefined()
@@ -137,7 +139,7 @@ describe('PATCH /api/users/current', () => {
     it('should can update user', async () => {
         const result = await supertest(app)
             .patch('/api/users/current')
-            .set('Authorization', 'test')
+            .set('Cookie', 'token=test')
             .send({
                 name: "Fahrul",
                 password: "passwordBaru"
@@ -151,7 +153,7 @@ describe('PATCH /api/users/current', () => {
     it('should can update username only', async () => {
         const result = await supertest(app)
             .patch('/api/users/current')
-            .set('Authorization', 'test')
+            .set('Cookie', 'token=test')
             .send({
                 name: "Fahrul"
             })
@@ -163,7 +165,7 @@ describe('PATCH /api/users/current', () => {
     it('should can update user password only', async () => {
         const result = await supertest(app)
             .patch('/api/users/current')
-            .set('Authorization', 'test')
+            .set('Cookie', 'token=test')
             .send({
                 password: "passwordBaru"
             })
@@ -172,6 +174,18 @@ describe('PATCH /api/users/current', () => {
         
         const user = await getTestUser();
         expect(user.password).not.toBe("rahasia"); 
+    })
+
+    it('should reject if new password is same as old password', async () => {
+        const result = await supertest(app)
+            .patch('/api/users/current')
+            .set('Cookie', 'token=test')
+            .send({
+                password: "rahasia"
+            })
+
+        expect(result.status).toBe(400)
+        expect(result.body.errors).toBe("Password kamu sama dengan yang sebelumnya")
     })
 })
 
@@ -188,11 +202,13 @@ describe('DELETE /api/users/logout', () => {
     it('should can logout', async () => {
         const result = await supertest(app)
             .delete('/api/users/logout')
-            .set('Authorization', 'test')
+            .set('Cookie', 'token=test')
 
         expect(result.status).toBe(200)
         expect(result.body.data).toBe("OK")
 
+        const cookies = result.get('Set-Cookie').toString()
+        expect(cookies).toContain('token=;')
         const user = await getTestUser()
         expect(user.token).toBeNull()
     })
@@ -200,7 +216,7 @@ describe('DELETE /api/users/logout', () => {
     it('should reject logout if token is invalid', async () => {
         const result = await supertest(app)
             .delete('/api/users/logout')
-            .set('Authorization', 'salah')
+            .set('Cookie', 'token=salah')
 
         expect(result.status).toBe(401)
         expect(result.body.errors).toBeDefined()

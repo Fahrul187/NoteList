@@ -23,6 +23,7 @@ export const registerUser = async (data) => {
 export const loginUser = async (data) => {
     const response = await fetch(`${BASE_URL}/api/users/login`, {
         method: "POST",
+        credentials: 'include',
         headers: {
             "Content-Type": "application/json",
         },
@@ -38,11 +39,11 @@ export const loginUser = async (data) => {
     return result;
 };
 
-export const getUser = async (token) => {
+export const getUser = async () => {
     const response = await fetch(`${BASE_URL}/api/users/current`, {
         method: 'GET',
+        credentials: 'include',
         headers: {
-            'Authorization': token,
             'Accept': 'application/json'
         }
     })
@@ -53,12 +54,12 @@ export const getUser = async (token) => {
     return result
 }
 
-export const updateUser = async (token, data) => {
+export const updateUser = async (data) => {
     const response = await fetch(`${BASE_URL}/api/users/current`, {
         method: 'PATCH',
+        credentials: 'include',
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': token,
         },
         body: JSON.stringify(data)
     })
@@ -69,12 +70,10 @@ export const updateUser = async (token, data) => {
     return result
 }
 
-export const logoutAPI = async (token) => {
+export const logoutAPI = async () => {
     const response = await fetch(`${BASE_URL}/api/users/logout`, {
         method: 'DELETE',
-        headers: {
-            'Authorization': token
-        }
+        credentials: 'include',
     })
     const result = await response.json()
     if (!response.ok) {
@@ -85,7 +84,4 @@ export const logoutAPI = async (token) => {
 
 
 
-export const logout = () => {
-    localStorage.removeItem('token')
-    localStorage.removeItem('user')
-}
+export const logout = () => localStorage.removeItem('user')
