@@ -9,6 +9,7 @@ import Login from './components/Login'
 import Layout from './components/Layout'
 import Register from './components/Register'
 import { GuestRoute, ProtectedRoute } from './components/AuthGuard'
+import CreateNote from './components/CreateNote'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -18,6 +19,7 @@ createRoot(document.getElementById('root')).render(
           <Route path="/" element={<App />} />
           <Route path="/:id" element={<DetailNote />} />
           <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/createnote" element={<CreateNote/>} />
         </Route>
         <Route path="/login" element={<GuestRoute><Login /></GuestRoute>} />
         <Route path="/register" element={<GuestRoute><Register /></GuestRoute>} />
